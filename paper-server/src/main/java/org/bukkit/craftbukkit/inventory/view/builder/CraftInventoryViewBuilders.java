@@ -25,6 +25,7 @@ public class CraftInventoryViewBuilders {
 
     public interface CraftInventoryMenuBuilder {
         CraftInventoryMenuBuilder GENERIC_9X3 = (syncId, playerInventory, container) -> new ChestMenu(MenuType.GENERIC_9x3, syncId, playerInventory, container, 3);
+        CraftInventoryMenuBuilder GENERIC_9X6 = (syncId, playerInventory, container) -> new ChestMenu(MenuType.GENERIC_9x6, syncId, playerInventory, container, 6);
 
         AbstractContainerMenu build(int syncId, Inventory playerInventory, Container container);
     }
