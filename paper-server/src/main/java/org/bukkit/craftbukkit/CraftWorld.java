@@ -67,6 +67,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.raid.Raids;
@@ -1916,12 +1917,6 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return this.getHandle().getPoiManager().getInRange(predicate, sourcePos, radius, nmsOccupancy)
             .map(record -> PaperPoiSearchResult.from(record, this))
             .toList();
-        /*
-        with Moonrise:
-        List<PoiRecord> ret = new ArrayList<>();
-        PoiAccess.findAnyPoiRecords(this.getHandle().getPoiManager(), predicate, $ -> true, sourcePos, radius, nmsOccupancy, false, Integer.MAX_VALUE, ret);
-        return ret.stream().map(record -> PaperPoiSearchResult.from(record, this)).toList();
-        */
     }
 
     @Override
