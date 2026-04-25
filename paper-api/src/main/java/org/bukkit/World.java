@@ -1812,7 +1812,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      */
     @Nullable
     default RayTraceResult rayTraceEntities(@NotNull Location start, @NotNull Vector direction, double maxDistance, @Nullable Predicate<? super Entity> filter) {
-        return this.rayTraceEntities(start, direction, maxDistance, 0.0D, filter);
+        return this.rayTraceEntities(start, direction, maxDistance, 0.0, filter);
     }
 
     /**
@@ -2054,7 +2054,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
     }
 
     /**
-     * Gets the relative in-game time of this world.
+     * Gets the relative in-game time of this world, or {@code 0} if this world does not have a world clock.
      * <p>
      * The relative time is analogous to hours * 1000
      *
@@ -2079,7 +2079,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
     public void setTime(long time);
 
     /**
-     * Gets the full in-game time on this world
+     * Gets the full in-game time on this world, or {@code 0} if this world does not have a world clock.
      *
      * @return The current absolute time
      * @see #getTime() Returns a relative time of this world
@@ -2094,7 +2094,10 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      *
      * @param time The new absolute time to set this world to
      * @see #setTime(long) Sets the relative time of this world
+     * @deprecated all overworlds share the same world clock by default now
+     * @throws IllegalArgumentException if this world does not have a world clock (e.g. the nether)
      */
+    @Deprecated // TODO world clock API with links to it
     public void setFullTime(long time);
 
     // Paper start
@@ -2769,10 +2772,11 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
     /**
      * Gets if this world is natural.
      * <p>
-     * When false, the moon is not visible and eyeblossoms do not open/close
+     * When true, eyeblossoms cycle open/close, nether portals can spawn
+     * zombified piglins and creaking heart works
      *
      * @return true if world is natural
-     * @deprecated replaced by the gameplay/eyeblossom_open and gameplay/creaking_active environment attributes
+     * @deprecated replaced by the gameplay/nether_portal_spawns_piglin, gameplay/eyeblossom_open and gameplay/creaking_active environmental attributes
      */
     @Deprecated(since = "1.21.11")
     public boolean isNatural();
@@ -2784,7 +2788,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * not always be the case.
      *
      * @return true if beds work in this world
-     * @deprecated Due to 1.21.11 beds changes, a boolean no longer
+     * @deprecated due to 1.21.11 beds changes, a boolean no longer
      * represents if they work. There is no replacement API yet
      */
     @ApiStatus.Obsolete(since = "1.21.11")
@@ -2809,6 +2813,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * transforming to zombified piglins.
      *
      * @return true if piglins will not transform to zombified piglins
+     * @apiNote the returned value may be inaccurate in custom biome using environmental attribute override
      */
     public boolean isPiglinSafe();
 
@@ -2816,6 +2821,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * Gets if this world allows players to charge and use respawn anchors.
      *
      * @return true if players can charge and use respawn anchors
+     * @apiNote the returned value may be inaccurate in custom biome using environmental attribute override
      */
     public boolean isRespawnAnchorWorks();
 
@@ -2824,6 +2830,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * raid.
      *
      * @return true if raids will be triggered
+     * @apiNote the returned value may be inaccurate in custom biome using environmental attribute override
      */
     public boolean hasRaids();
 
@@ -2837,7 +2844,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * </ul>
      *
      * @return true if this world has the above mechanics
-     * @deprecated as of 1.21.11, ultra warm is replaced by the WATER_EVAPORATES, FAST_LAVA, and DEFAULT_DRIPSTONE_PARTICLE environment attributes.
+     * @deprecated replaced by the gameplay/water_evaporates and gameplay/fast_lava environmental attributes
      */
     @Deprecated(since = "1.21.11")
     public boolean isUltraWarm();
@@ -3802,8 +3809,7 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * @param <T> the GameRule's type
      * @return the current value
      */
-    @Nullable
-    public <T> T getGameRuleValue(@NotNull GameRule<T> rule);
+    public @NotNull <T> T getGameRuleValue(@NotNull GameRule<T> rule);
 
     /**
      * Get the default value for a given {@link GameRule}. This value is not
@@ -3812,9 +3818,12 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      * @param rule the rule to return a default value for
      * @param <T> the type of GameRule
      * @return the default value
+     * @deprecated use {@link GameRule#getDefaultValue()} instead
      */
-    @Nullable
-    public <T> T getGameRuleDefault(@NotNull GameRule<T> rule);
+    @Deprecated(since = "26.1.2")
+    default <T> @NotNull T getGameRuleDefault(@NotNull GameRule<T> rule) {
+        return rule.getDefaultValue();
+    }
 
     /**
      * Set the given {@link GameRule}'s new value.
@@ -4106,7 +4115,6 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      */
     public <T> void spawnParticle(@NotNull Particle particle, @Nullable List<Player> receivers, @Nullable Player source, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, @Nullable T data, boolean force);
     // Paper end
-
 
     /**
      * Spawns the particle (the number of times specified by count)
