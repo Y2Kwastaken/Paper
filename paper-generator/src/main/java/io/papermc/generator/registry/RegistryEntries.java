@@ -4,6 +4,7 @@ import io.papermc.generator.utils.ClassHelper;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.entity.poi.PoiTypes;
 import io.papermc.paper.registry.data.BannerPatternRegistryEntry;
 import io.papermc.paper.registry.data.CatTypeRegistryEntry;
 import io.papermc.paper.registry.data.ChickenVariantRegistryEntry;
