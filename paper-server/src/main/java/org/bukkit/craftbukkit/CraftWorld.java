@@ -1894,7 +1894,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         final Holder<net.minecraft.world.entity.ai.village.poi.PoiType> nms = PaperPoiType.bukkitToMinecraftHolder(poiType);
         final PoiManager.Occupancy nmsOccupancy = PaperPoiType.PaperOccupancy.bukkitToMinecraft(occupancy);
-        final BlockPos sourcePos = CraftLocation.toBlockPosition(origin);
+        final BlockPos sourcePos = CraftLocation.toBlockPos(origin);
 
         return this.getHandle().getPoiManager().findClosestWithType(holder -> holder.is(nms), sourcePos, radius, nmsOccupancy)
             .map(found -> CraftLocation.toBukkit(found.getSecond(), this))
@@ -1911,7 +1911,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         final Predicate<Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> predicate = type -> poiTypePredicate.test(PaperPoiType.minecraftHolderToBukkit(type));
         final PoiManager.Occupancy nmsOccupancy = PaperPoiType.PaperOccupancy.bukkitToMinecraft(occupancy);
-        final BlockPos sourcePos = CraftLocation.toBlockPosition(origin);
+        final BlockPos sourcePos = CraftLocation.toBlockPos(origin);
 
         return this.getHandle().getPoiManager().getInRange(predicate, sourcePos, radius, nmsOccupancy)
             .map(record -> PaperPoiSearchResult.from(record, this))
